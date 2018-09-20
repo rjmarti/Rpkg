@@ -1,0 +1,1 @@
+Copy-Item  "$AppPath\_TaskRpkg\" -Destination "$AppPath\_Temp\Task" -Recurse -Force 

@@ -1,0 +1,1 @@
+Copy-Item  "$AppPath\_SQL\" -Destination "$AppPath\_Temp\SQL" -Recurse -Force 

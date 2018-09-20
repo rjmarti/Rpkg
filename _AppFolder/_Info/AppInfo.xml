@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <add key="AppName" value="WS-EmpleoAPI"/>
+    <add key="CurrentVersion" value="v.1.0.0.0"/>
+  </appSettings>
+</configuration>
