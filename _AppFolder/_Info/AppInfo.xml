@@ -3,5 +3,17 @@
   <appSettings>
     <add key="AppName" value="WS-EmpleoAPI"/>
     <add key="CurrentVersion" value="v.1.0.0.0"/>
+    <!-- === DESA ================================== -->
+    <add key="SitePath_DESA" value="//S1-DIXX-WEB09/WS-EmpleoAPI"/>
+    <add key="SQLServer_DESA" value="S1-DIXX-SQL10"/>
+    <!-- === TEST ================================== -->
+    <add key="SitePath_TEST" value="//S1-DIXX-WEB09/WS-EmpleoAPI"/>
+    <add key="SQLServer_TEST" value="S1-DIXX-SQL10"/>
+    <!-- === HOMO ================================== -->
+    <add key="SitePath_HOMO" value="//S1-DIXX-WEB09/WS-EmpleoAPI"/>
+    <add key="SQLServer_HOMO" value="S1-DIXX-SQL10"/>
+    <!-- === PROD ================================== -->
+    <add key="SitePath_PROD" value="//S1-DIXX-WEB09/WS-EmpleoAPI"/>
+    <add key="SQLServer_PROD" value="S1-DIXX-SQL10"/>
   </appSettings>
 </configuration>
