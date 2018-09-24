@@ -9,6 +9,6 @@ namespace Rpkg
         public string BackupPath { get; set; }
         public string AppPath { get; set; }
         public string InstallPath { get; set; }
-
+        public string FileRpkg { get; set; }
     }
 }

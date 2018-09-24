@@ -10,6 +10,14 @@ namespace Rpkg
 {
     class Program
     {
+        private const string PATH_INFO = "_Info";
+        private const string PATH_TASK = "_Task";
+        private const string PATH_SITE = "_Site";
+        private const string PATH_SQL = "_SQL";
+        private const string PATH_TEMP = "_Temp";
+
+        private static bool hasSite = false;
+        private static bool hasSQL = false;        
         private static string action;
         private static Rpkg rpkg;
         private static App app;
@@ -25,12 +33,12 @@ namespace Rpkg
             {
                 if (action == "create")
                 {
-
                     CreateRpkg();
                 }
 
                 if (action == "install")
                 {
+                    InstallRpkg();
                 }
             }
         }
@@ -44,16 +52,23 @@ namespace Rpkg
 
         static void InstallRpkg()
         {
-
+            if (File.Exists(rpkg.FileRpkg))  
+            {
+                Utils.UnZipPkg(rpkg.FileRpkg, @".\" + PATH_TEMP);
+            }
+            rpkg.AppPath = @".\" + PATH_TEMP;
+            ReadAppInfo(); 
+            Info();
         }
 
         static void ExecuteTask()
         {
-            var taskPath = Utils.JoinPath(rpkg.AppPath, "_Task");
+            var taskPath = Utils.JoinPath(rpkg.AppPath, PATH_TASK);
             var di = new DirectoryInfo(taskPath);
             var files = di.GetFiles("*.ps1").OrderBy(f => f.Name);
-            PSConfig.AddVariable("FileName", "\\kk.txt");
             PSConfig.AddVariable("AppPath", rpkg.AppPath);
+            PSConfig.AddVariable("AppName", app.Nombre);
+            PSConfig.AddVariable("AppVersion", app.Version);
             foreach (var file in files)
             {
                 Write.Label("Ejecutando: ", file.FullName);
@@ -61,7 +76,6 @@ namespace Rpkg
                 //script = script.Replace("{rpkg.AppPath}",rpkg.AppPath);
                 Console.WriteLine(PS.ExecutePS(script));
             }
-
         }
         static void Info()
         {
@@ -71,24 +85,34 @@ namespace Rpkg
             Write.Info("==================================");
             Write.Label("Rpkg: ", Assembly.GetEntryAssembly().GetName().Version.ToString());
             Write.Info("==================================");
-
+            Write.Label("App", app.Nombre);
+            Write.Label("Current Version", app.Version);
+            Write.Label("Action", action);
+            Write.Info("----------------------------------");
 
             if (action == "create")
             {
-                Write.Label("App", app.Nombre);
-                Write.Label("Current Version", app.Version);
-                Write.Label("Action", action);
-                Write.Info("----------------------------------");
             }
 
             if (action == "install")
             {
-                Write.Label("Install Path", rpkg.InstallPath);
+                var di = new DirectoryInfo(Utils.JoinPath(rpkg.AppPath, PATH_SITE));
+                var filesSites = di.GetFiles("*.*");
+                di = new DirectoryInfo(Utils.JoinPath(rpkg.AppPath,PATH_SQL));
+                var filesSQL = di.GetFiles("*.*");
+                Write.Info("Paquetes para instalar:");
+
+                hasSite = (filesSites.Count()> 0);
+                hasSQL = (filesSQL.Count()> 0);
+
+                Write.Info("- Archivos de Site: " + (hasSite ? "[X]":"[ ]"));     
+                Write.Info("- Scripts de SQL:   " + (hasSQL ? "[X]":"[ ]"));     
+
             }
         }
         static bool ReadAppInfo()
         {
-            var appInfo = Utils.JoinPath(rpkg.AppPath, "_Info", "AppInfo.xml");
+            var appInfo = Utils.JoinPath(rpkg.AppPath, PATH_INFO, "AppInfo.xml");
             Write.Label("AppInfo: ", appInfo);
 
             if (!File.Exists(appInfo))
@@ -126,18 +150,19 @@ namespace Rpkg
             if (args[0].StartsWith("-i"))
             {
                 action = "install";
+                rpkg.FileRpkg = args[1];
             }
 
             if (args[0].StartsWith("-c"))
             {
                 action = "create";
                 rpkg.AppPath = args[1];
-                
+
             }
 
             //For Debug
             // action = "create";
-            // rpkg.AppPath = @"E:\Temp\WSEmpleoAPI";
+            // rpkg.AppPath = @"F:\Temp\WSEmpleoAPI";
 
             return true;
         }

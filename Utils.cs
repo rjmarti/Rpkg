@@ -130,7 +130,7 @@ namespace Rpkg
                 Write.Info("Desempaquetando...");
                 Write.Label("Origen", fileOrigen);
                 Write.Label("Destino", destino);
-                ZipFile.CreateFromDirectory(fileOrigen, destino);
+                ZipFile.ExtractToDirectory(fileOrigen, destino);
             }
             catch
             {
