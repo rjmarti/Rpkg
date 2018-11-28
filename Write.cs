@@ -52,19 +52,38 @@ namespace Rpkg
             Console.Write(" " + label + ": ");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(value);
-            Default(); 
+            Default();
         }
-        public static bool Question(string question)
+
+        public static string Question(string question)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(question+":");
+            var rc = Console.ReadLine();
+            Default();
+            return rc; 
+        }
+        public static bool QuestionSN(string question)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(question + " [s/n]:");
             var rc = Console.ReadKey();
             Default();
             Console.WriteLine();
-            if ( rc.KeyChar == 's' || rc.KeyChar == 'S'){
-               return true;     
+            if (rc.KeyChar == 's' || rc.KeyChar == 'S')
+            {
+                return true;
             }
             return false;
+        }
+        public static string QuestionMulti(string question, string values)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(question + " [" + values + "]:");
+            var rc = Console.ReadKey();
+            Default();
+            Console.WriteLine();
+            return rc.KeyChar.ToString().ToLower(); 
         }
     }
 }

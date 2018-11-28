@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Management.Automation;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Rpkg.PSConsole
 {
@@ -8,8 +9,10 @@ namespace Rpkg.PSConsole
     {
         public static string ExecutePS(this string script)
         {
+            script = PreProcess(script);
             var sb = new StringBuilder(string.Format("> {0}\r", script));
 
+            powerShell.Commands.Clear();
             powerShell.AddScript(script);
             powerShell.AddCommand("Out-String");
             powerShell.AddParameter("Width", 133);
@@ -72,6 +75,36 @@ namespace Rpkg.PSConsole
             sb.AppendFormat("\r\n   + CategoryInfo          :{0}", err.CategoryInfo);
             sb.AppendFormat("\r\n   + FullyQualifiedErrorId :{0}", err.FullyQualifiedErrorId.ToString());
             sb.AppendLine();
+        }
+
+        private static string PreProcess(string script)
+        {
+            string[] lines = Regex.Split(script, "\r\n");
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string line in lines)
+            {
+                var l = line;
+                if (line.Contains("Read-Host") && !line.Contains("#"))
+                {
+                    var idxEqual = line.IndexOf('=');
+                    var idxReadHost = line.IndexOf("Read-Host");
+                    var idxLabel = (line.IndexOf("'") > 0) ? line.IndexOf("'") : 0;
+                    if (idxLabel == 0)
+                    {
+                        idxLabel = (line.IndexOf('"') > 0) ? line.IndexOf('"') : 0;
+                    }
+                    var q = line.Substring(idxLabel, line.Length - idxLabel);
+                    var rc = Write.Question(q);
+                    sb.AppendLine(line.Substring(0, idxEqual) + " = '" + rc + "'");
+                }
+                else
+                {
+                    sb.AppendLine(line);
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }
